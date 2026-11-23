@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "us-gov-data-suite": {
+      "transport": "http",
+      "url": "https://mcp.apify.com/?actors=ferraz_michel/sec-edgar-filings-mcp,ferraz_michel/usitc-hts-tariff-mcp,ferraz_michel/us-1099-nec-state-compliance-mcp,ferraz_michel/openfda-recall-device-radar,ferraz_michel/osha-safety-compliance-mcp,ferraz_michel/epa-echo-environmental-mcp,ferraz_michel/fmcsa-carrier-safety-mcp"
+    }
+  }
+}
