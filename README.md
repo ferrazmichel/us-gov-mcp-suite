@@ -2,6 +2,7 @@
 
 [![Hosted on Apify](https://img.shields.io/badge/Hosted%20on-Apify%20MCP-00C2FF)](https://apify.com/ferraz_michel)
 [![MCP Protocol](https://img.shields.io/badge/MCP-Streamable%20HTTP%20%7C%20npx-6E56CF)](https://mcp.apify.com)
+[![US Government Public Data MCP Suite MCP connector](https://glama.ai/mcp/connectors/com.apify.mcp/us-gov-mcp-suite/badges/score.svg)](https://glama.ai/mcp/connectors/com.apify.mcp/us-gov-mcp-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
 A suite of **7 hosted Model Context Protocol (MCP) servers** giving **Claude Desktop, Cursor, Windsurf, LangGraph, CrewAI, and n8n** direct, token-efficient access to official U.S. government public datasets — with **zero external API keys required** and hosted infrastructure managed on Apify Cloud.
