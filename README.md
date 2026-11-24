@@ -5,11 +5,11 @@
 [![US Government Public Data MCP Suite MCP connector](https://glama.ai/mcp/connectors/com.apify.mcp/us-gov-mcp-suite/badges/score.svg)](https://glama.ai/mcp/connectors/com.apify.mcp/us-gov-mcp-suite)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-A suite of **7 hosted Model Context Protocol (MCP) servers** giving **Claude Desktop, Cursor, Windsurf, LangGraph, CrewAI, and n8n** direct, token-efficient access to official U.S. government public datasets — with **zero external API keys required** and hosted infrastructure managed on Apify Cloud.
+A suite of **8 hosted Model Context Protocol (MCP) servers** giving **Claude Desktop, Cursor, Windsurf, LangGraph, CrewAI, and n8n** direct, token-efficient access to official U.S. government public datasets — with **zero external API keys required** and hosted infrastructure managed on Apify Cloud.
 
 ---
 
-## Included Hosted MCP Tools (7 Actors)
+## Included Hosted MCP Tools (8 Actors)
 
 | # | MCP Tool | Official US Data Source | Key Use Cases | Pricing | Apify Store |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -20,6 +20,7 @@ A suite of **7 hosted Model Context Protocol (MCP) servers** giving **Claude Des
 | 5 | **OSHA Safety & Compliance Search** | U.S. DOL (`apiprod.dol.gov`) | Workplace safety inspections, citations, penalty sums & top cited OSHA standards by company, state, or NAICS | PPE (`$5 / 1k`) | [View Actor](https://apify.com/ferraz_michel/osha-safety-compliance-mcp) |
 | 6 | **EPA ECHO Environmental Compliance Search** | U.S. EPA (`echodata.epa.gov`) | Clean Air (CAA), Clean Water (CWA), RCRA hazardous waste violations & facility environmental risk scoring | PPE (`$5 / 1k`) | [View Actor](https://apify.com/ferraz_michel/epa-echo-environmental-mcp) |
 | 7 | **FMCSA & USDOT Carrier Safety, Authority & Leads** | U.S. DOT (`data.transportation.gov`) | Trucking carrier safety vetting, MC/USDOT authority, BIPD insurance coverage & newly registered fleet leads | PPE (`$5 / 1k`) | [View Actor](https://apify.com/ferraz_michel/fmcsa-carrier-safety-mcp) |
+| 8 | **USAspending Federal Contracts & Re-Compete Radar** | U.S. Treasury (`api.usaspending.gov`) | Federal prime contracts/grants search, incumbent NAICS intelligence & expiring contract Re-Compete alerts | PPE (`$5 / 1k`) | [View Actor](https://apify.com/ferraz_michel/usaspending-federal-contracts-mcp) |
 
 ---
 
@@ -27,7 +28,7 @@ A suite of **7 hosted Model Context Protocol (MCP) servers** giving **Claude Des
 
 ### Option 1: Remote Streamable HTTP (Recommended — OAuth)
 
-Connect all 7 tools at once via Apify's official hosted MCP server (`https://mcp.apify.com`) using OAuth (no hardcoded tokens needed).
+Connect all 8 tools at once via Apify's official hosted MCP server (`https://mcp.apify.com`) using OAuth (no hardcoded tokens needed).
 
 Add to Cursor (`.cursor/mcp.json`) or any Streamable HTTP MCP client (also included in [`mcp.json`](./mcp.json)):
 
@@ -36,7 +37,7 @@ Add to Cursor (`.cursor/mcp.json`) or any Streamable HTTP MCP client (also inclu
   "mcpServers": {
     "us-gov-data-suite": {
       "transport": "http",
-      "url": "https://mcp.apify.com/?actors=ferraz_michel/sec-edgar-filings-mcp,ferraz_michel/usitc-hts-tariff-mcp,ferraz_michel/us-1099-nec-state-compliance-mcp,ferraz_michel/openfda-recall-device-radar,ferraz_michel/osha-safety-compliance-mcp,ferraz_michel/epa-echo-environmental-mcp,ferraz_michel/fmcsa-carrier-safety-mcp"
+      "url": "https://mcp.apify.com/?actors=ferraz_michel/sec-edgar-filings-mcp,ferraz_michel/usitc-hts-tariff-mcp,ferraz_michel/us-1099-nec-state-compliance-mcp,ferraz_michel/openfda-recall-device-radar,ferraz_michel/osha-safety-compliance-mcp,ferraz_michel/epa-echo-environmental-mcp,ferraz_michel/fmcsa-carrier-safety-mcp,ferraz_michel/usaspending-federal-contracts-mcp"
     }
   }
 }
@@ -53,6 +54,7 @@ Add to Cursor (`.cursor/mcp.json`) or any Streamable HTTP MCP client (also inclu
 | OSHA Safety & Compliance | `https://mcp.apify.com/?actors=ferraz_michel/osha-safety-compliance-mcp` |
 | EPA ECHO Environmental | `https://mcp.apify.com/?actors=ferraz_michel/epa-echo-environmental-mcp` |
 | FMCSA USDOT Carrier Safety | `https://mcp.apify.com/?actors=ferraz_michel/fmcsa-carrier-safety-mcp` |
+| USAspending Federal Contracts & Re-Compete | `https://mcp.apify.com/?actors=ferraz_michel/usaspending-federal-contracts-mcp` |
 
 ---
 
@@ -69,7 +71,7 @@ For Claude Desktop (`claude_desktop_config.json`) or clients preferring `stdio` 
         "-y",
         "@apify/actors-mcp-server",
         "--actors",
-        "ferraz_michel/sec-edgar-filings-mcp,ferraz_michel/usitc-hts-tariff-mcp,ferraz_michel/us-1099-nec-state-compliance-mcp,ferraz_michel/openfda-recall-device-radar,ferraz_michel/osha-safety-compliance-mcp,ferraz_michel/epa-echo-environmental-mcp,ferraz_michel/fmcsa-carrier-safety-mcp"
+        "ferraz_michel/sec-edgar-filings-mcp,ferraz_michel/usitc-hts-tariff-mcp,ferraz_michel/us-1099-nec-state-compliance-mcp,ferraz_michel/openfda-recall-device-radar,ferraz_michel/osha-safety-compliance-mcp,ferraz_michel/epa-echo-environmental-mcp,ferraz_michel/fmcsa-carrier-safety-mcp,ferraz_michel/usaspending-federal-contracts-mcp"
       ],
       "env": {
         "APIFY_TOKEN": "YOUR_APIFY_TOKEN"
@@ -119,6 +121,7 @@ See [`examples/prompts.md`](./examples/prompts.md) for ready-to-use prompts acro
 - CPA & Accounts Payable Compliance (2026 Form 1099-NEC state rules & 24% withholding)
 - Healthcare & Legal Recall Monitoring (Class I openFDA medical device recalls)
 - Supply Chain, Logistics & ESG Due Diligence (OSHA, EPA ECHO & FMCSA vetting)
+- GovCon & Federal BD Re-Compete Radar (USAspending expiring DoD cybersecurity & federal contracts)
 
 ---
 
