@@ -1,0 +1,185 @@
+{
+  "name": "Weekly FDA Class I Recall Radar (US Gov MCP Suite)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Weekly FDA Class I Recall Radar\n1. Set `APIFY_TOKEN` in your n8n environment variables (or replace `{{ $env.APIFY_TOKEN }}` in the HTTP node with your Bearer token).\n2. Swap the final **Connect Slack / Email / Webhook Here** node for Slack, Gmail, or Microsoft Teams.\n3. Uses the exact same pattern to query any of our other 7 US Government Actors (e.g. `sec-edgar-filings-mcp` or `usaspending-federal-contracts-mcp`).",
+        "height": 220,
+        "width": 360
+      },
+      "id": "sticky-setup-notes",
+      "name": "Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-weekly-mon",
+      "name": "Every Monday 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/ferraz_michel~openfda-recall-device-radar/run-sync-get-dataset-items",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.APIFY_TOKEN }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"domain\": \"all\",\n  \"classification\": \"Class I\",\n  \"status\": \"Ongoing\",\n  \"maxRecords\": 15,\n  \"outputMode\": \"detailed\"\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "http-openfda-actor",
+      "name": "Fetch Ongoing Class I Recalls (openFDA Actor)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map((item) => item.json).filter((r) => r && r.recallNumber);\n\nconst domainCounts = {};\nfor (const rec of items) {\n  const d = rec.domain || 'unknown';\n  domainCounts[d] = (domainCounts[d] || 0) + 1;\n}\n\nconst lines = items.slice(0, 10).map((rec, idx) => {\n  const product = String(rec.productDescription || '').slice(0, 110);\n  const dist = String(rec.distributionPattern || 'N/A').slice(0, 80);\n  return `${idx + 1}. [${(rec.domain || '').toUpperCase()} | ${rec.riskLevel || 'CRITICAL'}] ${rec.recallingFirm} (${rec.recallNumber})\\n   Product: ${product}\\n   Distribution: ${dist}\\n   FDA Link: ${rec.openFdaPortalUrl || 'https://www.fda.gov/safety/recalls-market-withdrawals-safety-alerts'}`;\n});\n\nconst summaryHeader = `Weekly FDA Class I Recall Radar — ${items.length} active recall(s) found`;\nconst breakdownText = Object.entries(domainCounts).map(([k, v]) => `${k}: ${v}`).join(' | ') || 'none';\nconst digestMarkdown = `${summaryHeader}\\nDomains: ${breakdownText}\\n\\n${lines.join('\\n\\n')}`;\n\nreturn [\n  {\n    json: {\n      hasRecalls: items.length > 0,\n      totalRecalls: items.length,\n      domainCounts,\n      digestMarkdown,\n      topRecalls: items.slice(0, 10),\n    },\n  },\n];"
+      },
+      "id": "code-build-digest",
+      "name": "Build Executive Recall Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-recalls-check",
+              "leftValue": "={{ $json.hasRecalls }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-any-recalls",
+      "name": "Any Active Recalls?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        980,
+        360
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "noop-alert-target",
+      "name": "Connect Slack / Email / Webhook Here",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1240,
+        340
+      ]
+    }
+  ],
+  "connections": {
+    "Every Monday 08:00": {
+      "main": [
+        [
+          {
+            "node": "Fetch Ongoing Class I Recalls (openFDA Actor)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Ongoing Class I Recalls (openFDA Actor)": {
+      "main": [
+        [
+          {
+            "node": "Build Executive Recall Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Executive Recall Digest": {
+      "main": [
+        [
+          {
+            "node": "Any Active Recalls?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Active Recalls?": {
+      "main": [
+        [
+          {
+            "node": "Connect Slack / Email / Webhook Here",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

@@ -85,7 +85,7 @@ For Claude Desktop (`claude_desktop_config.json`) or clients preferring `stdio` 
 
 ### Option 3: Direct REST API / Python / n8n
 
-Every Actor can also be invoked synchronously over HTTPS via Apify's REST API:
+Import our ready-to-use n8n workflow template at [`examples/n8n-openfda-class1-recall-alert.json`](./examples/n8n-openfda-class1-recall-alert.json) (weekly automated FDA Class I Recall Radar with native built-in nodes), or invoke any Actor synchronously over HTTPS via Apify's REST API:
 
 ```bash
 curl -X POST "https://api.apify.com/v2/acts/ferraz_michel~sec-edgar-filings-mcp/run-sync-get-dataset-items?token=YOUR_APIFY_TOKEN" \
